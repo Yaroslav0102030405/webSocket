@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <form action="" class="form-user-name">
+      <label for=""
+        >Представьтесь чату
+        <input type="text" name="name" placeholder="Ваше имя"
+      /></label>
+    </form>
+    <!-- <br /> -->
+
+    <div id="chat" class="chat" style="border: 1px solid black; width: 300px">
+      <!-- <p>
+        <span class="name">Богдан:</span>
+        <span class="chat-msg" style="background-color: yellowgreen"
+          >Всем привет!</span
+        >
+      </p> -->
+      <!-- <p>
+        <span class="name">Ира:</span>
+        <span class="chat-msg" style="background-color: aqua">Привет!</span>
+      </p> -->
+    </div>
+    <form action="" class="form-chat">
+      <textarea
+        name="message"
+        id=""
+        cols="30"
+        rows="3"
+        placeholder="Новое сообщение"
+      ></textarea>
+      <br />
+      <button type="submit">Отправить</button>
+    </form>
+
+    <!-- <script>
+      const ws = new WebSocket('ws://localhost:5000');
+
+      //   ws.onopen = () => {
+      //     console.log("З'єднання встановленно");
+      //   };
+
+      ws.onmessage = (event) => {
+        console.log(event.data);
+        ws.send('Привіт!');
+      };
+    </script> -->
+
+    <script>
+      const user = { name: '', message: '' };
+      const chat = document.querySelector('.chat');
+
+      const ws = new WebSocket('ws://localhost:4000');
+
+      ws.onmessage = ({ data }) => {
+        const { name, message } = JSON.parse(data);
+
+        chat.insertAdjacentHTML(
+          'beforeend',
+          `<p>
+        <span class="name">${name}:</span>
+        <span class="chat-msg" style="background-color: yellowgreen"
+          >${message}</span
+        >
+      </p>`
+        );
+      };
+
+      const userNameChat = document.querySelector('.form-user-name');
+      userNameChat.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        user.name = this.querySelector('[name=name]').value;
+        console.log(user);
+        this.remove();
+      });
+
+      const chatForm = document.querySelector('.form-chat');
+      chatForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        user.message = this.querySelector('[name=message]').value;
+        console.log(user);
+
+        chat.insertAdjacentHTML(
+          'beforeend',
+          `<p>
+        <span class="name">${user.name}:</span>
+        <span class="chat-msg" style="background-color: yellowgreen"
+          >${user.message}</span
+        >
+      </p>`
+        );
+        ws.send(JSON.stringify(user));
+        this.reset();
+      });
+    </script>
+  </head>
+  <body></body>
+</html>
